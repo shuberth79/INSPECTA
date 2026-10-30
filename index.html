@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inspecta · Checklist de inspección</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f0f4f7;--card:#fff;--ink:#0f2233;--mut:#5a6a7a;--line:#d8e2ea;
+  --brand:#0b3d5c;--brand2:#0e5280;--acc:#e0a526;--acc2:#f5b92a;
+  --ok:#1a7a42;--no:#bf3030;--okbg:#e0f2e9;--nobg:#fde8e8;
+  --chip:#e4edf4;--radius:14px;--sh:0 2px 12px rgba(0,0,0,.07);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1622;--card:#131f2e;--ink:#dce8f0;--mut:#7a90a4;--line:#1e2f42;
+  --brand:#0b3d5c;--okbg:#0f2e1c;--nobg:#2d0f0f;--chip:#192535;
+  --ok:#3dba6e;--no:#f07070;--sh:0 2px 12px rgba(0,0,0,.3);
+}}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Manrope,system-ui,sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--brand);z-index:30}
+
+/* ── HEADER ── */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:linear-gradient(135deg,var(--brand) 60%,var(--brand2));color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.hbar{display:flex;align-items:center;gap:10px;max-width:960px;margin:auto;padding:10px 14px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.5px;line-height:1}.logo i{color:var(--acc);font-style:normal}
+.hbar .sp{flex:1}
+.hbtn{border:0;border-radius:9px;padding:8px 13px;font:600 13px Manrope,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.hbtn.acc{background:var(--acc);color:#1a1200}
+.hbtn.ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.prog-wrap{max-width:960px;margin:0 auto;padding:6px 14px 10px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.85)}
+.prog-track{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;background:var(--acc2);transition:width .3s;border-radius:6px}
+
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+label{font-size:12px;font-weight:700;color:var(--mut);display:block;margin-bottom:4px;letter-spacing:.02em}
+
+/* ── MAIN ── */
+main{max-width:960px;margin:auto;padding:14px 14px 100px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:9px 14px;border:0;background:none;color:var(--mut);font:600 13px Manrope,sans-serif;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:9px 9px 0 0;cursor:pointer}
+.tab.on{color:var(--brand);border-bottom-color:var(--brand);background:var(--card)}
+.tab svg{width:15px;height:15px;vertical-align:middle;margin-right:4px}
+
+/* ── PANEL: META ── */
+.meta-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));box-shadow:var(--sh)}
+.meta-card h2{grid-column:1/-1;margin:0;font-size:16px}
+.full{grid-column:1/-1}
+
+/* ── PANEL: CONFIGURADOR ── */
+.cfg{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--sh);overflow:hidden}
+.cfg-sec{padding:14px 16px;border-bottom:1px solid var(--line)}
+.cfg-sec:last-child{border-bottom:0}
+.cfg-sec h3{margin:0 0 10px;font-size:14px;display:flex;align-items:center;gap:8px}
+.cfg-sec h3 span{font-size:18px}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.cfg-row:last-child{border-bottom:0}
+.cfg-row label{margin:0;font-size:13px;color:var(--ink);font-weight:500}
+.cfg-row .right{display:flex;align-items:center;gap:8px}
+.num-ctrl{display:flex;align-items:center;gap:0}
+.num-ctrl button{border:1px solid var(--line);background:var(--bg);color:var(--ink);width:32px;height:32px;font-size:18px;line-height:1;padding:0;border-radius:6px}
+.num-ctrl button:first-child{border-radius:6px 0 0 6px}
+.num-ctrl button:last-child{border-radius:0 6px 6px 0}
+.num-ctrl span{width:36px;text-align:center;font-weight:700;font-size:15px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);height:32px;line-height:32px;background:var(--card)}
+.toggle{position:relative;width:42px;height:24px}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-sl{position:absolute;inset:0;background:var(--line);border-radius:12px;cursor:pointer;transition:.2s}
+.toggle-sl::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-sl{background:var(--brand)}
+.toggle input:checked+.toggle-sl::before{transform:translateX(18px)}
+.cfg-preview{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.cfg-tag{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
+.cfg-tag button{background:none;border:0;color:var(--no);font-size:16px;line-height:1;padding:0}
+.add-item-row{display:flex;gap:8px;margin-top:10px}
+.add-item-row input{flex:1}
+.add-item-row button{flex:none;background:var(--brand);color:#fff;border:0;border-radius:9px;padding:9px 14px;font-weight:600}
+
+/* ── PANEL: INSPECCIÓN ── */
+.ambchips{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:thin}
+.ambchip{flex:none;border:0;border-radius:99px;padding:7px 13px;font-size:13px;font-weight:600;background:var(--chip);color:var(--ink);cursor:pointer}
+.ambchip.on{background:var(--brand);color:#fff}
+.ambchip small{opacity:.7;margin-left:4px}
+
+.amb-sec{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)}
+.amb-hd{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:var(--chip);border-bottom:1px solid var(--line)}
+.amb-hd h3{margin:0;font-size:15px}
+.amb-stats{font-size:12px;color:var(--mut);font-weight:600}
+
+.item{padding:12px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:26px 1fr;gap:4px 10px}
+.item:last-child{border-bottom:0}
+.item-n{color:var(--mut);font-weight:800;font-size:13px;padding-top:2px}
+.item-txt{font-size:14px;font-weight:600;line-height:1.4}
+.item-rb{font-size:11px;font-weight:600;color:var(--mut);margin-top:2px;text-transform:uppercase;letter-spacing:.04em}
+.item-rb.x{color:var(--acc)}
+.item-acts{grid-column:2;display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.snbtn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:7px 18px;font-weight:700;font-size:14px;min-width:62px;transition:.15s}
+.snbtn.si.on{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.snbtn.no.on{background:var(--nobg);color:var(--no);border-color:var(--no)}
+.lnk{background:none;border:0;color:var(--mut);font-size:12px;font-weight:600;text-decoration:underline;padding:4px 0}
+.item-extra{grid-column:2;margin-top:6px;display:flex;flex-direction:column;gap:8px}
+.item-extra textarea{min-height:56px;resize:vertical}
+
+/* fotos */
+.photos-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.photo-thumb{position:relative;width:74px;height:74px;border-radius:9px;overflow:hidden;border:1px solid var(--line);cursor:pointer}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .del-ph{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:20px;height:20px;font-size:13px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
+.photo-thumb .ph-note{position:absolute;inset:auto 0 0;background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add-photo-btn{width:74px;height:74px;border-radius:9px;border:2px dashed var(--line);background:var(--bg);color:var(--mut);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+input[type=file]{display:none}
+
+/* añadir ítem */
+.add-row{padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);background:var(--chip)}
+.add-row input{flex:1;min-width:120px}
+.add-row select{flex:none;width:130px}
+.add-row .btn-add{flex:none;background:var(--brand);color:#fff;border:0;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}
+
+/* resumen */
+.sumcard{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:var(--radius);padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;text-align:center;box-shadow:var(--sh);margin-bottom:14px}
+.sumcard b{display:block;font-size:28px;font-weight:800}
+.sumcard span{font-size:12px;opacity:.8}
+
+.foot{display:flex;gap:10px;flex-wrap:wrap}
+.foobtn{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:10px;padding:9px 14px;font-weight:600}
+
+/* modal foto */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--card);border-radius:16px;width:100%;max-width:400px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.modal-box img{width:100%;border-radius:10px;max-height:55vh;object-fit:contain}
+.modal-box h4{margin:0;font-size:15px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.modal-actions button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:8px 16px;font-weight:600}
+.modal-actions button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="logo">inspecta<i>.</i></div>
+    <div class="sp"></div>
+    <button class="hbtn ghost" id="btnConfig" title="Configurar vivienda">⚙ Vivienda</button>
+    <button class="hbtn acc" id="btnPDF">⬇ Exportar PDF</button>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="pb" style="width:0%"></div></div>
+    <span id="pt">0 de 0 revisados</span>
+  </div>
+</header>
+
+<main>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" data-tab="inspeccion">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="14" rx="3"/><path d="M7 10l2 2 4-4"/></svg>Inspección
+    </button>
+    <button class="tab" data-tab="meta">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3v14M3 10h14"/></svg>Datos generales
+    </button>
+    <button class="tab" data-tab="config">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="3"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.9 4.9l1.4 1.4M13.7 13.7l1.4 1.4M4.9 15.1l1.4-1.4M13.7 6.3l1.4-1.4"/></svg>Configurar
+    </button>
+  </div>
+
+  <!-- TAB: META -->
+  <div id="panel-meta" class="hidden">
+    <div class="meta-card">
+      <h2>Datos de la inspección</h2>
+      <div class="full"><label for="p">Nombre del proyecto / vivienda</label><input id="p" placeholder="Ej. Condominio A10 segundo piso alto"></div>
+      <div><label for="f">Fecha de revisión</label><input type="date" id="f"></div>
+      <div><label for="rr">Revisó (iniciales)</label><input id="rr" placeholder="SNCV"></div>
+      <div><label for="tt">Tiempo de ejecución</label><input id="tt" placeholder="Ej. 5 días"></div>
+      <div><label for="piso">Piso / nivel</label><input id="piso" placeholder="Ej. Segundo piso alto"></div>
+      <div><label for="promo">Promotora / constructora</label><input id="promo" placeholder="Nombre"></div>
+    </div>
+  </div>
+
+  <!-- TAB: CONFIG -->
+  <div id="panel-config" class="hidden">
+    <div class="cfg">
+      <div class="cfg-sec">
+        <h3><span>🛏</span> Dormitorios</h3>
+        <div class="cfg-row">
+          <label>Dormitorio máster</label>
+          <div class="right"><label class="toggle"><input type="checkbox" id="cfg-dmaster" checked><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="cfg-row">
+          <label>Cantidad de dormitorios adicionales</label>
+          <div class="right num-ctrl">
+            <button data-nc="dorms" data-op="-">−</button>
+            <span id="val-dorms">2</span>
+            <button data-nc="dorms" data-op="+">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-sec">
+        <h3><span>🚿</span> Baños</h3>
+        <div class="cfg-row">
+          <label>Baño máster</label>
+          <div class="right"><label class="toggle"><input type="checkbox" id="cfg-bmaster" checked><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="cfg-row">
+          <label>WC / baño de visitas</label>
+          <div class="right"><label class="toggle"><input type="checkbox" id="cfg-wc" checked><span class="toggle-sl"></span></label></div>
+        </div>
+        <div class="cfg-row">
+          <label>Baños adicionales</label>
+          <div class="right num-ctrl">
+            <button data-nc="banos" data-op="-">−</button>
+            <span id="val-banos">0</span>
+            <button data-nc="banos" data-op="+">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-sec">
+        <h3><span>🏠</span> Espacios comunes</h3>
+        <div class="cfg-row"><label>Sala</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-sala" checked><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Comedor</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-comedor" checked><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Cocina</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-cocina" checked><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Lavandería</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-lavanderia" checked><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Corredor / pasillo</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-corredor" checked><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Terraza / balcón</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-terraza"><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Estudio / oficina</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-estudio"><span class="toggle-sl"></span></label></div></div>
+        <div class="cfg-row"><label>Garaje / parqueadero</label><div class="right"><label class="toggle"><input type="checkbox" id="cfg-garaje"><span class="toggle-sl"></span></label></div></div>
+      </div>
+      <div class="cfg-sec">
+        <h3><span>➕</span> Espacios personalizados</h3>
+        <div id="custom-spaces"></div>
+        <div class="add-item-row">
+          <input id="new-space" placeholder="Nombre del espacio (ej. Cuarto de servicio)">
+          <button id="btn-add-space">Agregar</button>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--mut);margin-top:10px;padding:0 2px">Los cambios en la configuración actualizan los ambientes disponibles en la inspección.</p>
+  </div>
+
+  <!-- TAB: INSPECCIÓN -->
+  <div id="panel-inspeccion">
+    <div class="ambchips" id="chips"></div>
+    <div id="list"></div>
+    <div class="sumcard" id="sum"></div>
+    <div class="foot">
+      <button class="foobtn" id="rst">↺ Reiniciar inspección</button>
+    </div>
+  </div>
+</main>
+
+<!-- Modal foto -->
+<div class="modal-overlay hidden" id="photo-modal">
+  <div class="modal-box">
+    <h4 id="modal-title">Foto</h4>
+    <img id="modal-img" src="" alt="">
+    <div><label>Comentario de la foto</label><textarea id="modal-note" rows="3" placeholder="Describe el defecto o la observación"></textarea></div>
+    <div class="modal-actions">
+      <button id="modal-cancel">Cancelar</button>
+      <button id="modal-del" style="color:var(--no)">Eliminar foto</button>
+      <button class="pri" id="modal-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" accept="image/*" id="file-input" capture="environment">
+
+<script>
+const { jsPDF } = window.jspdf;
+
+/* ── RUBROS ── */
+const RB = ["Recubrimiento","Albañilería","Madera","Pintura","Gasfitería","Eléctrico","Alvid"];
+
+/* ── PLANTILLAS DE ITEMS POR AMBIENTE ── */
+const TMPL = {
+  "Baño máster": [
+    ["RESINAR BOQUETE DE LAVAMANOS",0],["CORTAR BOQUETE PARA TOMACORRIENTE SOBRE MESÓN",0],
+    ["RESANAR BAJO MESÓN",1],["RETIRAR MARCO DE PUERTAS, RETIRAR REPIZA INFERIOR Y VOLTEARLA",2],
+    ["AJUSTAR Y REVISAR JAMBA Y FILOS PUERTA (AL EXTERIOR)",2],
+    ["E/P FISURA PERIMETRAL TUMBADO Y JUNTO A OJO BUEY",3],["PINTAR BAJO LOSETA MESÓN Y FILO",3],
+    ["AJUSTAR SIFONES (FUGA DE AGUA)",4],["REGULAR FLOTADOR INODORO",4],["COLOCAR TOMACORRIENTE SOBRE MESÓN",5]
+  ],
+  "Dorm. máster": [
+    ["R/E/P TUMBADO Y PARED (LATERAL DERECHO SUPERIOR VENTANA)",3],["DESMANCHES GENERALES",3],
+    ["RECTIFICAR MALLA ANTI MOSQUITO",6],["NIVELAR DE TOMACORRIENTES",5]
+  ],
+  "Sala": [
+    ["EMPORAR RASTERAS (PARTE INFERIOR)",0],["RECTIFICAR MALLA ANTI MOSQUITO",6],
+    ["LIMPIEZA FINA PERFILES SUPERIORES",6],["R/E/P PARED PUNTO SPLIT",3]
+  ],
+  "Comedor": [
+    ["EMPORAR RASTERAS (PARTE INFERIOR)",0],["NIVELAR DE TOMACORRIENTES",5],
+    ["E/P COLUMNA",3],["R/E/P TUMBADO",3]
+  ],
+  "Cocina": [
+    ["CORTAR BOQUETE PARA TOMACORRIENTE SOBRE MESÓN",0],["COLOCAR TOMACORRIENTE SOBRE MESÓN",5],
+    ["COLOCAR TOMACORRIENTE Y CABLEADO (FILTRO AGUA)",5],["COLOCAR TAPA ANTIGUO PANEL DE BREAKERS",5],
+    ["E/P PARED DETRÁS DE DESAGÜE",3],["R/P BAJO LOSETA DE MESÓN (EL MÁS LARGO)",3],
+    ["E/P BAJO FALDÓN, ESQUINA (IZQ LAVAPLATOS)",3],["E/P FILO COLUMNA SOBRE MESÓN (IZQ ENCIMERA)",3],
+    ["E/P BAJO FALDÓN, ESQUINA (SOBRE PUERTA DERECHA)",3],["E/P ALREDEDOR LLAVES CONTROL LAVAPLATOS",3],
+    ["E/P TUMBADO",3],["REGULAR BISAGRAS PUERTAS BAJO LAVAPLATOS",2],
+    ["COLOCAR CUBRE CABEZA TORNILLOS (CAJONES, ANAQUEL SUPERIOR)",2],
+    ["PERFORAR 2 REPIZAS PARA EXTRACCIÓN DE CAMPANA",2],["LIMPIAR BORDOS INFERIORES",2]
+  ],
+  "Lavandería": [["COLOCAR TOMACORRIENTES",5],["COLOCAR 2 LLAVES TIPO MANGUERA PARA LAVADORA",4]],
+  "WC visitas": [
+    ["RESINAR FILO FALDÓN",0],["COLOCAR DUCHA TELÉFONO",4],["AJUSTAR SIFÓN (FUGA DE AGUA)",4],
+    ["OCULTAR TEFLÓN DE LA DUCHA",4],["R/E/P PATA DE MESÓN",3],["P EN TUMBADO",3]
+  ],
+  "Corredor": [["DESMANCHAR PARED Y TUMBADO",3],["EMPORAR RASTRERAS",0]],
+  "Terraza": [["REVISAR IMPERMEABILIZACIÓN PISO",0],["REVISAR DESAGÜE DE TERRAZA",4],["R/E/P PAREDES PERÍMETRO",3]],
+  "Estudio": [["R/E/P TUMBADO",3],["NIVELAR TOMACORRIENTES",5],["AJUSTAR PUERTA DE ACCESO",2]],
+  "Garaje": [["REVISAR PUERTA AUTOMÁTICA",2],["PINTAR LÍNEAS DEMARCATORIAS",3],["REVISAR ILUMINACIÓN",5]],
+};
+const dormTmpl = n => [
+  [`E/P PARED SPLIT`,3],[`P PARED SOBRE LOSETA CLOSET`,3],
+  [`COLOCAR TOMACORRIENTE SPLIT`,5],[`NIVELAR TOMACORRIENTES`,5],
+  [`COLOCAR CUBRE CABEZA TORNILLO CLOSET`,2],[`COLOCAR BORDOS EN MARCO DE PUERTAS`,2],
+  [`REUBICAR ÁNGULO DE SOPORTE MARCO DE PUERTA CLOSET`,2],
+  [`MASILLAR Y PINTAR MARCO SUPERIOR PUERTA DE INGRESO`,2],
+  [`E/P PARED SOBRE DINTEL PUERTA`,3],[`PINTAR PARED DE FONDO DEL CLOSET`,3],
+  [`RECTIFICAR MALLA ANTIMOSQUITO`,6]
+];
+const banoTmpl = n => [
+  [`RESINAR BOQUETE DE LAVAMANOS`,0],[`AJUSTAR SIFÓN (FUGA DE AGUA)`,4],
+  [`COLOCAR DUCHA TELÉFONO`,4],[`R/E/P PAREDES`,3],[`COLOCAR TOMACORRIENTE`,5]
+];
+
+/* ── STATE ── */
+const KEY = "inspecta-v3";
+let S = {
+  m: { p:"Condominio A10 segundo piso alto", f: new Date().toISOString().slice(0,10), rr:"SNCV", tt:"5 días", piso:"Segundo piso alto", promo:"" },
+  cfg: { dmaster:true, bmaster:true, wc:true, sala:true, comedor:true, cocina:true, lavanderia:true, corredor:true, terraza:false, estudio:false, garaje:false, dorms:2, banos:0, custom:[] },
+  st:{}, nt:{}, ex:{}, photos:{}, open:{}
+};
+try{ const x=localStorage.getItem(KEY); if(x) S=JSON.parse(x); }catch(e){}
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+
+/* ── AMBIENTES ACTIVOS ── */
+function getAmbientes() {
+  const cfg = S.cfg, list = [];
+  if(cfg.dmaster) list.push("Dorm. máster");
+  for(let i=1;i<=cfg.dorms;i++) list.push(`Dorm. ${i+1}`);
+  if(cfg.bmaster) list.push("Baño máster");
+  if(cfg.wc) list.push("WC visitas");
+  for(let i=1;i<=cfg.banos;i++) list.push(`Baño ${i+1}`);
+  if(cfg.sala) list.push("Sala");
+  if(cfg.comedor) list.push("Comedor");
+  if(cfg.cocina) list.push("Cocina");
+  if(cfg.lavanderia) list.push("Lavandería");
+  if(cfg.corredor) list.push("Corredor");
+  if(cfg.terraza) list.push("Terraza");
+  if(cfg.estudio) list.push("Estudio");
+  if(cfg.garaje) list.push("Garaje");
+  (cfg.custom||[]).forEach(c => list.push(c));
+  return list;
+}
+
+function getItems(amb) {
+  let base;
+  if(amb.startsWith("Dorm. ") && amb!=="Dorm. máster") base = dormTmpl(amb);
+  else if(amb.startsWith("Baño ") && amb!=="Baño máster") base = banoTmpl(amb);
+  else base = TMPL[amb] || [];
+  const extras = S.ex[amb] || [];
+  return [
+    ...base.map((it,i) => ({id:amb+"-"+i, t:it[0], r:it[1], base:true})),
+    ...extras.map((it,i) => ({id:amb+"x"+i, t:it[0], r:it[1], base:false}))
+  ];
+}
+
+function getCnt(amb) {
+  const l = getItems(amb);
+  return { n:l.length, si:l.filter(i=>S.st[i.id]==="si").length, no:l.filter(i=>S.st[i.id]==="no").length };
+}
+
+/* ── ACTIVE TAB & AMB FILTER ── */
+let activeTab = "inspeccion";
+let curAmb = null; // null = todos
+
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = d => { if(!d) return ""; const [y,m,x]=d.split("-"); return `${x}/${m}/${y}`; };
+
+/* ── RENDER ── */
+function render() {
+  // progress
+  const ambs = getAmbientes();
+  let tot=0,si=0,no=0;
+  ambs.forEach(a=>{ const c=getCnt(a);tot+=c.n;si+=c.si;no+=c.no; });
+  const done=si+no;
+  document.getElementById("pb").style.width = (tot?done*100/tot:0)+"%";
+  document.getElementById("pt").textContent = `${done} de ${tot} revisados`;
+
+  // tabs visibility
+  ["meta","config","inspeccion"].forEach(t=>{
+    document.getElementById("panel-"+t).classList.toggle("hidden", activeTab!==t);
+  });
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on", b.dataset.tab===activeTab));
+
+  if(activeTab==="meta") renderMeta();
+  else if(activeTab==="config") renderConfig();
+  else renderInspeccion(ambs, tot, si, no, done);
+}
+
+function renderMeta() {
+  for(const k of ["p","f","rr","tt","piso","promo"]){
+    const el = document.getElementById(k);
+    if(el && el !== document.activeElement) el.value = S.m[k]||"";
+  }
+}
+
+function renderConfig() {
+  // checkboxes
+  ["dmaster","bmaster","wc","sala","comedor","cocina","lavanderia","corredor","terraza","estudio","garaje"].forEach(k=>{
+    const el = document.getElementById("cfg-"+k);
+    if(el) el.checked = !!S.cfg[k];
+  });
+  document.getElementById("val-dorms").textContent = S.cfg.dorms;
+  document.getElementById("val-banos").textContent = S.cfg.banos;
+  // custom spaces
+  const div = document.getElementById("custom-spaces");
+  div.innerHTML = (S.cfg.custom||[]).map(c=>
+    `<div class="cfg-tag">${esc(c)} <button data-del-space="${esc(c)}" title="Eliminar">✕</button></div>`
+  ).join("");
+}
+
+function renderInspeccion(ambs, tot, si, no, done) {
+  // chips
+  const chips = document.getElementById("chips");
+  chips.innerHTML = `<button class="ambchip ${curAmb===null?"on":""}" data-amb="">Todos <small>${done}/${tot}</small></button>`
+    + ambs.map(a=>{ const c=getCnt(a); return `<button class="ambchip ${curAmb===a?"on":""}" data-amb="${esc(a)}">${esc(a)} <small>${c.si+c.no}/${c.n}</small></button>`; }).join("");
+
+  // items
+  let h = "";
+  const display = curAmb ? [curAmb] : ambs;
+  display.forEach(amb => {
+    if(!ambs.includes(amb)) return;
+    const c = getCnt(amb), items = getItems(amb);
+    h += `<div class="amb-sec">
+      <div class="amb-hd"><h3>${esc(amb)}</h3><div class="amb-stats">${c.si} sí · ${c.no} no · ${c.n} total</div></div>`;
+    items.forEach((it,i) => {
+      const s = S.st[it.id]||"";
+      const hasNote = !!S.nt[it.id];
+      const photos = S.photos[it.id]||[];
+      const open = S.open[it.id];
+      h += `<div class="item">
+        <div class="item-n">${i+1}</div>
+        <div>
+          <div class="item-txt">${esc(it.t)}</div>
+          <div class="item-rb${!it.base?" x":""}">${RB[it.r]}${!it.base?" · agregado":""}</div>
+        </div>
+        <div class="item-acts">
+          <button class="snbtn si ${s==="si"?"on":""}" data-s="${esc(it.id)}" data-v="si">Sí</button>
+          <button class="snbtn no ${s==="no"?"on":""}" data-s="${esc(it.id)}" data-v="no">No</button>
+          <button class="lnk" data-toggle="${esc(it.id)}">${open?"▲ Cerrar":"▼ Nota y fotos"}</button>
+        </div>
+        ${open ? `<div class="item-extra">
+          <textarea data-nt="${esc(it.id)}" placeholder="Nota de inspección">${esc(S.nt[it.id]||"")}</textarea>
+          <div class="photos-wrap">
+            ${photos.map((ph,pi)=>`<div class="photo-thumb" data-view-photo="${esc(it.id)}" data-pi="${pi}">
+              <img src="${ph.url}" alt="">
+              ${ph.note?`<div class="ph-note">${esc(ph.note)}</div>`:""}
+            </div>`).join("")}
+            <label class="add-photo-btn" data-add-photo="${esc(it.id)}" title="Agregar foto">📷</label>
+          </div>
+        </div>` : ""}
+      </div>`;
+    });
+    h += `<div class="add-row">
+      <input id="ni-${esc(amb)}" placeholder="Nueva observación">
+      <select id="nr-${esc(amb)}">${RB.map((r,i)=>`<option value="${i}">${r}</option>`).join("")}</select>
+      <button class="btn-add" data-additem="${esc(amb)}">+ Agregar</button>
+    </div></div>`;
+  });
+  document.getElementById("list").innerHTML = h;
+
+  // summary
+  document.getElementById("sum").innerHTML = `
+    <div><b>${tot}</b><span>Total observaciones</span></div>
+    <div><b>${si}</b><span>Ejecutadas</span></div>
+    <div><b>${no}</b><span>No ejecutadas</span></div>
+    <div><b>${tot-done}</b><span>Pendientes</span></div>
+    <div><b>${done?Math.round(done*100/tot):0}%</b><span>Avance</span></div>
+  `;
+}
+
+/* ── EVENTS ── */
+document.addEventListener("click", e => {
+  const el = e.target;
+
+  // tabs
+  const tab = el.closest(".tab");
+  if(tab){ activeTab=tab.dataset.tab; render(); return; }
+
+  // amb chip
+  const chip = el.closest(".ambchip");
+  if(chip){ curAmb = chip.dataset.amb||null; render(); return; }
+
+  // sí/no
+  if(el.dataset.s){
+    const id=el.dataset.s, v=el.dataset.v;
+    S.st[id]=S.st[id]===v?"":v; save();
+    const y=scrollY; render(); scrollTo(0,y); return;
+  }
+
+  // toggle nota+fotos
+  if(el.dataset.toggle){
+    S.open[el.dataset.toggle]=!S.open[el.dataset.toggle]; save();
+    const y=scrollY; render(); scrollTo(0,y); return;
+  }
+
+  // add item
+  if(el.dataset.additem){
+    const amb=el.dataset.additem, v=document.getElementById("ni-"+amb)?.value?.trim();
+    if(!v) return;
+    const r=+(document.getElementById("nr-"+amb)?.value||0);
+    (S.ex[amb]=S.ex[amb]||[]).push([v,r]); save();
+    const y=scrollY; render(); scrollTo(0,y); return;
+  }
+
+  // view photo
+  const vph = el.closest("[data-view-photo]");
+  if(vph){ openPhotoModal(vph.dataset.viewPhoto, +vph.dataset.pi); return; }
+
+  // add photo trigger
+  const aph = el.closest("[data-add-photo]");
+  if(aph){ pendingPhotoId=aph.dataset.addPhoto; pendingPhotoIdx=null; document.getElementById("file-input").click(); return; }
+
+  // num ctrl
+  if(el.dataset.nc){
+    const k=el.dataset.nc, op=el.dataset.op;
+    if(op==="+") S.cfg[k]=Math.min(S.cfg[k]+1,6);
+    else S.cfg[k]=Math.max(S.cfg[k]-1,0);
+    save(); render(); return;
+  }
+
+  // del custom space
+  if(el.dataset.delSpace){
+    S.cfg.custom=(S.cfg.custom||[]).filter(c=>c!==el.dataset.delSpace); save(); render(); return;
+  }
+
+  // add custom space
+  if(el.id==="btn-add-space"){
+    const v=document.getElementById("new-space")?.value?.trim();
+    if(!v) return;
+    (S.cfg.custom=S.cfg.custom||[]).push(v); save();
+    document.getElementById("new-space").value="";
+    render(); return;
+  }
+
+  // rst
+  if(el.id==="rst"){
+    if(confirm("¿Borrar todo el avance de esta inspección?")){ S.st={};S.nt={};S.ex={};S.photos={};S.open={};save();render(); }
+    return;
+  }
+
+  // pdf
+  if(el.id==="btnPDF"){ exportPDF(); return; }
+
+  // config icon
+  if(el.id==="btnConfig"){ activeTab="config"; render(); return; }
+
+  // modal
+  if(el.id==="modal-cancel"||el.id==="modal-overlay"){ closeModal(); return; }
+  if(el.id==="modal-save"){ savePhotoNote(); return; }
+  if(el.id==="modal-del"){ deletePhoto(); return; }
+});
+
+// overlay click
+document.getElementById("photo-modal").addEventListener("click",e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+document.addEventListener("change", e => {
+  const el = e.target;
+  // meta inputs
+  if(["p","f","rr","tt","piso","promo"].includes(el.id)){ S.m[el.id]=el.value; save(); return; }
+  // cfg checkboxes
+  const cfgKey = el.id?.replace("cfg-","");
+  if(el.closest(".cfg") && el.type==="checkbox" && cfgKey){
+    S.cfg[cfgKey]=el.checked; save(); render(); return;
+  }
+  // nota
+  if(el.dataset.nt){ S.nt[el.dataset.nt]=el.value; save(); return; }
+  // file input
+  if(el.id==="file-input") handleFileSelect(el.files[0]);
+});
+
+/* ── PHOTOS ── */
+let pendingPhotoId=null, pendingPhotoIdx=null;
+
+function handleFileSelect(file){
+  if(!file||!pendingPhotoId) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const url=ev.target.result;
+    (S.photos[pendingPhotoId]=S.photos[pendingPhotoId]||[]).push({url,note:""});
+    save();
+    pendingPhotoIdx=(S.photos[pendingPhotoId].length-1);
+    openPhotoModal(pendingPhotoId, pendingPhotoIdx);
+    document.getElementById("file-input").value="";
+  };
+  reader.readAsDataURL(file);
+}
+
+function openPhotoModal(id, idx){
+  const photos=S.photos[id]||[];
+  if(!photos[idx]) return;
+  pendingPhotoId=id; pendingPhotoIdx=idx;
+  document.getElementById("modal-img").src=photos[idx].url;
+  document.getElementById("modal-note").value=photos[idx].note||"";
+  document.getElementById("modal-title").textContent=`Foto ${idx+1} de ${photos.length}`;
+  document.getElementById("photo-modal").classList.remove("hidden");
+}
+
+function closeModal(){
+  document.getElementById("photo-modal").classList.add("hidden");
+  pendingPhotoId=null; pendingPhotoIdx=null;
+  const y=scrollY; render(); scrollTo(0,y);
+}
+
+function savePhotoNote(){
+  if(pendingPhotoId===null||pendingPhotoIdx===null) return;
+  (S.photos[pendingPhotoId]=S.photos[pendingPhotoId]||[])[pendingPhotoIdx].note=document.getElementById("modal-note").value;
+  save(); closeModal();
+}
+
+function deletePhoto(){
+  if(pendingPhotoId===null||pendingPhotoIdx===null) return;
+  (S.photos[pendingPhotoId]||[]).splice(pendingPhotoIdx,1);
+  save(); closeModal();
+}
+
+/* ── PDF EXPORT (jsPDF) ── */
+async function exportPDF(){
+  const btn=document.getElementById("btnPDF");
+  btn.textContent="Generando..."; btn.disabled=true;
+  try {
+    const doc = new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+    const W=210, H=297, ml=16, mr=16, cw=W-ml-mr;
+    let y=0;
+
+    // ── paleta: sobria, beige/dorada/neutra — sin azules ni rojos salvo los indicadores ──
+    const logo=[11,61,92];           // navy — únicamente para la palabra "inspecta."
+    const acc=[224,165,38];          // dorado — líneas y barras de acento
+    const beige=[243,236,221];       // beige claro — encabezado, pie, portada
+    const beigeSoft=[249,244,232];   // beige muy claro — filas alternas
+    const beigeLine=[214,199,164];   // beige oscuro — líneas y bordes
+    const dark=[45,39,31];           // neutro oscuro cálido — fondos de tablas/totales
+    const ink=[43,37,30];            // texto principal
+    const mut=[123,112,95];          // texto secundario
+    const white=[255,255,255];
+    const ok=[26,122,66], no=[191,48,48], okbg=[224,242,233], nobg=[253,232,232];
+
+    const sf=c=>doc.setFillColor(c[0],c[1],c[2]);
+    const st=c=>doc.setTextColor(c[0],c[1],c[2]);
+    const sd=c=>doc.setDrawColor(c[0],c[1],c[2]);
+
+    // ── datos calculados ──
+    const ambs=getAmbientes();
+    const porAmb=ambs.map(amb=>{
+      const items=getItems(amb);
+      const si=items.filter(i=>S.st[i.id]==="si").length;
+      const no_=items.filter(i=>S.st[i.id]==="no").length;
+      return {amb,items,si,no:no_,pend:items.length-si-no_,total:items.length};
+    }).filter(a=>a.total>0);
+    const total=porAmb.reduce((a,b)=>a+b.total,0);
+    const totalSi=porAmb.reduce((a,b)=>a+b.si,0);
+    const totalNo=porAmb.reduce((a,b)=>a+b.no,0);
+    const totalPend=total-totalSi-totalNo;
+    const pct = total ? Math.round((totalSi/total)*1000)/10 : 0;
+    const clasif = pct>=85 ? {label:"BUENO", c:ok} : pct>=60 ? {label:"REGULAR", c:acc} : {label:"REQUIERE ATENCIÓN", c:no};
+    const reportCode = "REF-"+(S.m.f? S.m.f.replace(/-/g,"") : new Date().toISOString().slice(0,10).replace(/-/g,""));
+    const today = fmt(S.m.f) || fmt(new Date().toISOString().slice(0,10));
+
+    // ── helpers de dibujo ──
+    const stateIcon=(cx,cy,state)=>{
+      const r=1.7;
+      if(state==="si"){ sf(ok); doc.circle(cx,cy,r,"F"); sd(white); doc.setLineWidth(0.4);
+        doc.line(cx-0.9,cy+0.1,cx-0.2,cy+0.9); doc.line(cx-0.2,cy+0.9,cx+1,cy-0.8);
+      } else if(state==="no"){ sf(no); doc.circle(cx,cy,r,"F"); sd(white); doc.setLineWidth(0.4);
+        doc.line(cx-0.8,cy-0.8,cx+0.8,cy+0.8); doc.line(cx-0.8,cy+0.8,cx+0.8,cy-0.8);
+      } else { sd(mut); doc.setLineWidth(0.3); doc.circle(cx,cy,r,"S"); }
+    };
+    const pill=(x,yy,text,color,tcolor)=>{
+      doc.setFont("helvetica","bold"); doc.setFontSize(6.6);
+      const tw=doc.getTextWidth(text);
+      const w=tw+5.5, h=4.6;
+      sf(color); doc.roundedRect(x,yy,w,h,2.3,2.3,"F");
+      st(tcolor||white); doc.text(text,x+w/2,yy+3.1,{align:"center"});
+      return w;
+    };
+    const statCard=(x,yy,w,h,label,value,color,bg)=>{
+      sf(bg); doc.roundedRect(x,yy,w,h,2.5,2.5,"F");
+      sd(color); doc.setLineWidth(0.35); doc.roundedRect(x,yy,w,h,2.5,2.5,"S");
+      st(color); doc.setFont("helvetica","bold"); doc.setFontSize(h>19?18:13);
+      doc.text(String(value),x+w/2,yy+h*0.58,{align:"center"});
+      st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.4);
+      doc.text(label,x+w/2,yy+h-3.2,{align:"center"});
+    };
+    const stateMeta = s => s==="si" ? {label:"EJECUTADO",bg:ok} : s==="no" ? {label:"NO EJECUTADO",bg:no} : {label:"PENDIENTE",bg:[140,140,140]};
+    // logotipo: texto "inspecta" en negro + punto dorado pegado al texto
+    const drawLogo=(x,y,size)=>{
+      doc.setFont("helvetica","bold"); doc.setFontSize(size);
+      doc.setTextColor(18,18,18);
+      doc.text("inspecta",x,y);
+      const tw=doc.getTextWidth("inspecta");
+      const gap=size*0.07, dotSize=size*0.17;
+      sf(acc);
+      doc.rect(x+tw+gap, y-dotSize*0.92, dotSize, dotSize, "F");
+      return tw+gap+dotSize;
+    };
+
+    let currentSubtitle="";
+    const drawHeader=(subtitle)=>{
+      sf(beige); doc.rect(0,0,W,22,"F");
+      sf(acc); doc.rect(0,22,W,0.87,"F");
+      drawLogo(ml,11,16);
+      st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(6.8);
+      doc.text("INFORME DE INSPECCIÓN TÉCNICA",ml,16);
+      st(mut); doc.setFontSize(6.2);
+      doc.text(subtitle||"",ml,20);
+      st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(8);
+      doc.text(S.m.p||"—",W-mr,10,{align:"right"});
+      st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.3);
+      doc.text(`${reportCode}  ·  ${today}`,W-mr,16,{align:"right"});
+    };
+    const ensureSpace=(need)=>{
+      if(y+need>H-18){ doc.addPage(); drawHeader(currentSubtitle); y=29; }
+    };
+    const startSection=(subtitle)=>{
+      doc.addPage(); currentSubtitle=subtitle; drawHeader(subtitle); y=29;
+    };
+    const sectionTitle=(txt,num)=>{
+      ensureSpace(14);
+      sf(acc); doc.rect(ml,y,1.3,7,"F");
+      st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(13);
+      doc.text((num?num+". ":"")+txt,ml+4,y+5.5);
+      y+=11;
+    };
+    const ambHeader=(a)=>{
+      ensureSpace(13);
+      sf(acc); doc.rect(ml,y,1.3,8,"F");
+      st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(10.5);
+      doc.text(a.amb.toUpperCase(),ml+4,y+4);
+      st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(7);
+      doc.text(`${a.total} elementos · ${a.si} ejecutados · ${a.no} no ejecutados · ${a.pend} pendientes`,ml+4,y+7.6);
+      y+=12;
+    };
+
+    // ══════════════════ PORTADA ══════════════════
+    sf(beige); doc.rect(0,0,W,58,"F");
+    drawLogo(ml,26,30);
+    st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(9);
+    doc.text("INSPECCIÓN TÉCNICA DE VIVIENDAS",ml,33);
+
+    // badge resultado general (esquina superior derecha)
+    const bw=58,bh=40,bx=W-mr-bw,by=10;
+    sf(white); doc.roundedRect(bx,by,bw,bh,3,3,"F");
+    sd(beigeLine); doc.setLineWidth(0.4); doc.roundedRect(bx,by,bw,bh,3,3,"S");
+    sf(dark); doc.roundedRect(bx,by,bw,9,3,3,"F"); doc.rect(bx,by+5,bw,4,"F");
+    st(white); doc.setFont("helvetica","bold"); doc.setFontSize(6.6);
+    doc.text("RESULTADO GENERAL",bx+bw/2,by+5.8,{align:"center"});
+    st(clasif.c); doc.setFont("helvetica","bold"); doc.setFontSize(22);
+    doc.text(String(pct),bx+bw/2-4,by+22,{align:"center"});
+    doc.setFontSize(8); st(mut);
+    doc.text("/100",bx+bw/2+9,by+22);
+    pill(bx+bw/2-13,by+25,clasif.label,clasif.c);
+    doc.setFont("helvetica","normal"); st(mut); doc.setFontSize(5.6);
+    doc.text(`Avance sobre ${total} ítems`,bx+bw/2,by+37,{align:"center"});
+
+    y=68;
+    sf(acc); doc.rect(ml,y,22,1.2,"F"); y+=8;
+    st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(19);
+    doc.text("INFORME DE INSPECCIÓN",ml,y); y+=8;
+    doc.text("TÉCNICA DE PRE ENTREGA",ml,y); y+=8;
+    st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(9.5);
+    doc.text("Inspección visual no invasiva · Checklist de obra",ml,y); y+=12;
+
+    // datos generales
+    pill(ml,y,"DATOS GENERALES",acc,[40,28,0]); y+=9;
+    const rows=[
+      ["PROYECTO / VIVIENDA", S.m.p||"—"],
+      ["UBICACIÓN / PISO", S.m.piso||"—"],
+      ["CÓDIGO DEL INFORME", reportCode],
+      ["FECHA DE REVISIÓN", today||"—"],
+      ["REVISÓ", S.m.rr||"—"],
+      ["TIEMPO DE EJECUCIÓN", S.m.tt||"—"],
+      ["CONSTRUCTORA / PROMOTORA", S.m.promo||"—"],
+    ];
+    sf(beigeSoft); doc.roundedRect(ml,y,cw,rows.length*7+4,2,2,"F");
+    sd(beigeLine); doc.setLineWidth(0.3); doc.roundedRect(ml,y,cw,rows.length*7+4,2,2,"S");
+    let ry=y+6.5;
+    rows.forEach((r,i)=>{
+      if(i%2===1){ sf(beige); doc.rect(ml,ry-5,cw,7,"F"); }
+      st(mut); doc.setFont("helvetica","bold"); doc.setFontSize(7.2);
+      doc.text(r[0],ml+4,ry);
+      st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+      doc.text(String(r[1]),ml+70,ry);
+      ry+=7;
+    });
+    y=ry+8;
+
+    // 3 tarjetas de indicadores
+    const cardW=(cw-10)/3;
+    const cards=[["EJECUTADAS",totalSi,ok,okbg],["PENDIENTES",totalPend,[120,120,120],[235,235,235]],["NO EJECUTADAS",totalNo,no,nobg]];
+    cards.forEach((c,i)=>statCard(ml+i*(cardW+5),y,cardW,22,c[0],c[1],c[2],c[3]));
+    y+=30;
+
+    st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(7.6);
+    const ambList = porAmb.map(a=>a.amb).join(" · ");
+    const ambLines = doc.splitTextToSize(`${total} elementos calificados en ${porAmb.length} ambientes: ${ambList}.`,cw);
+    ambLines.forEach((l,i)=>doc.text(l,ml,y+i*4.4));
+
+    // franja inferior de portada
+    sf(beige); doc.rect(0,H-16,W,16,"F");
+    sf(acc); doc.rect(0,H-16,W,0.87,"F");
+    drawLogo(ml,H-7,10);
+    st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.6);
+    doc.text("CALIDAD · CONFIANZA · PROFESIONALISMO",W/2,H-7,{align:"center"});
+    doc.text(`${reportCode}  ·  ${today}`,W-mr,H-7,{align:"right"});
+
+    // ══════════════════ RESUMEN EJECUTIVO ══════════════════
+    startSection("Resumen ejecutivo y conclusiones");
+    sectionTitle("Resumen ejecutivo","1");
+    st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(9);
+    const resumenTxt = `La vivienda registró un avance de ejecución de ${pct}/100, clasificado como ${clasif.label}. Se calificaron ${total} elementos en ${porAmb.length} ambientes: ${totalSi} ejecutados, ${totalNo} no ejecutados y ${totalPend} pendientes de verificación.`;
+    doc.splitTextToSize(resumenTxt,cw).forEach(l=>{ doc.text(l,ml,y); y+=4.6; });
+    y+=4;
+
+    // tarjetas resumen (4)
+    const sCards=[["PUNTAJE",pct+"/100",clasif.c,[236,230,218]],["EJECUTADAS",totalSi,ok,okbg],["NO EJECUTADAS",totalNo,no,nobg],["PENDIENTES",totalPend,[120,120,120],[235,235,235]]];
+    const sCardW=(cw-15)/4;
+    sCards.forEach((c,i)=>statCard(ml+i*(sCardW+5),y,sCardW,18,c[0],c[1],c[2],c[3]));
+    y+=26;
+
+    // tabla por área
+    sectionTitle("Avance por ambiente","1.1");
+    const tcols={amb:cw*0.34,el:cw*0.12,si:cw*0.14,no:cw*0.14,pe:cw*0.12,pct:cw*0.14};
+    const tcx={amb:ml,el:ml+tcols.amb,si:ml+tcols.amb+tcols.el,no:ml+tcols.amb+tcols.el+tcols.si,pe:ml+tcols.amb+tcols.el+tcols.si+tcols.no,pct:ml+tcols.amb+tcols.el+tcols.si+tcols.no+tcols.pe};
+    const drawTblHead=()=>{
+      ensureSpace(9); sf(dark); doc.rect(ml,y,cw,7,"F");
+      st(white); doc.setFont("helvetica","bold"); doc.setFontSize(7);
+      doc.text("ÁMBITO",tcx.amb+2,y+4.8); doc.text("ELEM.",tcx.el+1,y+4.8);
+      doc.text("EJEC.",tcx.si+1,y+4.8); doc.text("NO EJ.",tcx.no+1,y+4.8);
+      doc.text("PEND.",tcx.pe+1,y+4.8); doc.text("% AVANCE",tcx.pct+1,y+4.8);
+      y+=7;
+    };
+    drawTblHead();
+    porAmb.forEach((a,i)=>{
+      ensureSpace(8);
+      if(i%2===1){ sf(beigeSoft); doc.rect(ml,y,cw,7,"F"); }
+      st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(7.3);
+      doc.text(a.amb,tcx.amb+2,y+4.8);
+      doc.text(String(a.total),tcx.el+1,y+4.8);
+      st(ok); doc.text(String(a.si),tcx.si+1,y+4.8);
+      st(no); doc.text(String(a.no),tcx.no+1,y+4.8);
+      st([120,120,120]); doc.text(String(a.pend),tcx.pe+1,y+4.8);
+      const ap=a.total?Math.round(a.si/a.total*100):0;
+      st(ink); doc.setFont("helvetica","bold"); doc.text(ap+"%",tcx.pct+1,y+4.8);
+      y+=7;
+    });
+    ensureSpace(8); sf(dark); doc.rect(ml,y,cw,7.5,"F");
+    st(white); doc.setFont("helvetica","bold"); doc.setFontSize(7.4);
+    doc.text("TOTAL",tcx.amb+2,y+5); doc.text(String(total),tcx.el+1,y+5);
+    doc.text(String(totalSi),tcx.si+1,y+5); doc.text(String(totalNo),tcx.no+1,y+5);
+    doc.text(String(totalPend),tcx.pe+1,y+5); doc.text(pct+"%",tcx.pct+1,y+5);
+    y+=14;
+
+    // conclusión general
+    sectionTitle("Conclusión general","1.2");
+    doc.setFont("helvetica","normal"); doc.setFontSize(8.8); st(ink);
+    const conclTxt = totalNo>0
+      ? `Se recomienda atender prioritariamente los ${totalNo} puntos marcados como no ejecutados, verificando su corrección antes de la entrega. Los ${totalPend} puntos pendientes deben revisarse en una siguiente visita de inspección. Una vez subsanadas las observaciones, se sugiere efectuar una reinspección para confirmar el cierre de todos los puntos señalados.`
+      : `No se registraron puntos marcados como no ejecutados en esta revisión. Se recomienda completar la verificación de los ${totalPend} puntos pendientes para cerrar la inspección.`;
+    doc.splitTextToSize(conclTxt,cw).forEach(l=>{ ensureSpace(5); doc.text(l,ml,y); y+=4.6; });
+    y+=6;
+
+    // puntos que requieren atención
+    const noItems=[];
+    porAmb.forEach(a=>a.items.forEach(it=>{ if(S.st[it.id]==="no") noItems.push({amb:a.amb,it}); }));
+    if(noItems.length){
+      sectionTitle("Puntos que requieren atención","1.3");
+      noItems.forEach((n,i)=>{
+        ensureSpace(10);
+        st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(8.3);
+        doc.text(`${i+1}.`,ml,y);
+        doc.text(`${n.amb} — `,ml+6,y);
+        const w1=doc.getTextWidth(`${n.amb} — `);
+        doc.setFont("helvetica","normal"); doc.setFontSize(8.3);
+        const txt=n.it.t+(S.nt[n.it.id.toString()]?(" · "+S.nt[n.it.id]):"");
+        const lines=doc.splitTextToSize(txt,cw-6-w1);
+        doc.text(lines[0]||"",ml+6+w1,y);
+        for(let li=1;li<lines.length;li++){ y+=4.4; ensureSpace(5); doc.setFont("helvetica","normal"); doc.setFontSize(8.3); doc.text(lines[li],ml+6,y); }
+        y+=5.6;
+      });
+    }
+
+    // ══════════════════ DETALLE DE LOS PUNTOS REVISADOS ══════════════════
+    startSection("Detalle de los puntos revisados");
+    sectionTitle("Detalle de los puntos revisados","2");
+    st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+    doc.splitTextToSize("Todos los elementos revisados, agrupados por ambiente, con su estado y la observación registrada en sitio.",cw).forEach(l=>{ doc.text(l,ml,y); y+=4.4; });
+    y+=4;
+
+    const dcols={n:8,obs:86,rub:28,est:cw-8-86-28};
+    const dcx={n:ml,obs:ml+dcols.n,rub:ml+dcols.n+dcols.obs,est:ml+dcols.n+dcols.obs+dcols.rub};
+    porAmb.forEach((a)=>{
+      ambHeader(a);
+      a.items.forEach((it,ii)=>{
+        const s=S.st[it.id]||"";
+        const note=S.nt[it.id]||"";
+        const meta=stateMeta(s);
+        const obsLines=doc.splitTextToSize(it.t,dcols.obs-4);
+        const noteLines = note ? doc.splitTextToSize("Nota: "+note,dcols.obs-4) : [];
+        const rowH = Math.max(8, 3.6*Math.min(obsLines.length,2) + (noteLines.length?3.4*Math.min(noteLines.length,2)+1:0) + 3);
+        ensureSpace(rowH+2);
+        if(ii%2===1){ sf(beigeSoft); doc.rect(ml,y,cw,rowH,"F"); }
+        sd(beigeLine); doc.setLineWidth(0.2);
+        doc.line(ml,y+rowH,ml+cw,y+rowH);
+        st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(7.3);
+        doc.text(String(ii+1),dcx.n+1,y+5);
+        doc.setFont("helvetica","normal"); doc.setFontSize(7.3);
+        let ly=y+4.2;
+        obsLines.slice(0,2).forEach(l=>{ doc.text(l,dcx.obs+1,ly); ly+=3.6; });
+        if(noteLines.length){
+          st(mut); doc.setFontSize(6.4); doc.setFont("helvetica","italic");
+          noteLines.slice(0,2).forEach(l=>{ doc.text(l,dcx.obs+1,ly); ly+=3.4; });
+          st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(7.3);
+        }
+        doc.setFontSize(6.6); st(mut);
+        doc.text(RB[it.r],dcx.rub+1,y+5);
+        pill(dcx.est+1,y+2,meta.label,meta.bg);
+        y+=rowH;
+      });
+      y+=3;
+    });
+
+    // ══════════════════ ANEXOS (recopilatorio fotográfico, al final) ══════════════════
+    const ambsConFotos = porAmb.filter(a=>a.items.some(it=>S.photos[it.id]&&S.photos[it.id].length));
+    if(ambsConFotos.length){
+      startSection("Anexos");
+      sectionTitle("Anexos","3");
+      st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+      doc.splitTextToSize("Recopilatorio de imágenes registradas durante la inspección. Cada fotografía está numerada e identificada con el espacio y la referencia del punto correspondiente en el detalle.",cw).forEach(l=>{ doc.text(l,ml,y); y+=4.2; });
+      y+=6;
+
+      const phW=52, phH=39, gapX=6, gapY=11, perRow=3;
+      let photoNum=0;
+      ambsConFotos.forEach(a=>{
+        ensureSpace(10);
+        sf(acc); doc.rect(ml,y,1.3,6,"F");
+        st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(9.5);
+        doc.text(a.amb.toUpperCase(),ml+4,y+4.5);
+        y+=10;
+        let col=0;
+        a.items.forEach((it,ii)=>{
+          const ph=S.photos[it.id]; if(!ph||!ph.length) return;
+          ph.forEach(p=>{
+            photoNum++;
+            if(col===perRow){ col=0; y+=phH+gapY; }
+            ensureSpace(phH+gapY+4);
+            const px=ml+col*(phW+gapX);
+            try{ doc.addImage(p.url,"JPEG",px,y,phW,phH); }
+            catch(ex){ sf([230,230,230]); doc.rect(px,y,phW,phH,"F"); }
+            sd(beigeLine); doc.setLineWidth(0.35); doc.rect(px,y,phW,phH);
+            sf(acc); doc.circle(px+4,y+4,3,"F");
+            st([32,24,8]); doc.setFont("helvetica","bold"); doc.setFontSize(6.4);
+            doc.text(String(photoNum),px+4,y+5.1,{align:"center"});
+            st(ink); doc.setFont("helvetica","bold"); doc.setFontSize(6.3);
+            doc.text(`${a.amb} · #${ii+1}`,px,y+phH+3.6);
+            st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(5.9);
+            doc.splitTextToSize(it.t,phW).slice(0,2).forEach((l,li)=>doc.text(l,px,y+phH+6.8+li*2.9));
+            col++;
+          });
+        });
+        if(col>0) y+=phH+gapY;
+        y+=5;
+      });
+    }
+
+    // ══════════════════ PIES Y NUMERACIÓN ══════════════════
+    const totalPages=doc.internal.getNumberOfPages();
+    for(let pg=2;pg<=totalPages;pg++){
+      doc.setPage(pg);
+      sf(beige); doc.rect(0,H-10,W,10,"F");
+      sf(acc); doc.rect(0,H-10,W,0.522,"F");
+      const lw=drawLogo(ml,H-4.2,7.4);
+      st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.6);
+      doc.text(" · Inspección técnica independiente",ml+lw+1.5,H-4.2);
+      doc.text(`Página ${pg} de ${totalPages}`,W-mr,H-4.2,{align:"right"});
+    }
+
+    const fname=`informe-${(S.m.p||"inspecta").replace(/\s+/g,"-").toLowerCase()}-${S.m.f||"sin-fecha"}.pdf`;
+    const blob = doc.output("blob");
+    await deliverPDF(blob, fname);
+  } catch(err){
+    alert("Error al generar el PDF: "+err.message);
+  }
+  btn.textContent="⬇ Exportar PDF"; btn.disabled=false;
+}
+/* Entrega el PDF al visor: usa la capacidad "downloads" del artefacto
+   publicado; si no está disponible (p. ej. fuera de claude.ai), recurre
+   a un enlace de descarga normal del navegador. */
+async function deliverPDF(blob, filename){
+  try{
+    if(window.claude && typeof window.claude.use === "function"){
+      const downloads = await window.claude.use("downloads");
+      if(downloads){
+        const res = await downloads.save({ filename, data: blob });
+        return res;
+      }
+    }
+  }catch(err){
+    if(err && err.code === "declined") return; // el usuario canceló, no es un fallo
+    // cualquier otro error: intentamos el método del navegador como respaldo
+  }
+  // Respaldo: descarga directa vía el navegador
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 4000);
+}
+
+render();
+</script>
+</body>
+</html>
