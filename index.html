@@ -1,41 +1,43 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Inspecta · Checklist de inspección</title>
+<title>APPWEB INSPECTA</title>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
-  --bg:#f0f4f7;--card:#fff;--ink:#0f2233;--mut:#5a6a7a;--line:#d8e2ea;
-  --brand:#0b3d5c;--brand2:#0e5280;--acc:#e0a526;--acc2:#f5b92a;
-  --ok:#1a7a42;--no:#bf3030;--okbg:#e0f2e9;--nobg:#fde8e8;
-  --chip:#e4edf4;--radius:14px;--sh:0 2px 12px rgba(0,0,0,.07);
+  --bg:#1a1a1a;--card:#242424;--ink:#e8e4dc;--mut:#9e9890;--line:#333330;
+  --brand:#2a2a2a;--brand2:#1f1f1f;--acc:#d4a027;--acc2:#e8b535;
+  --ok:#2d8f56;--no:#c0392b;--okbg:#0f2218;--nobg:#2a0f0d;
+  --chip:#2e2e2c;--radius:14px;--sh:0 2px 16px rgba(0,0,0,.4);
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0b1622;--card:#131f2e;--ink:#dce8f0;--mut:#7a90a4;--line:#1e2f42;
-  --brand:#0b3d5c;--okbg:#0f2e1c;--nobg:#2d0f0f;--chip:#192535;
-  --ok:#3dba6e;--no:#f07070;--sh:0 2px 12px rgba(0,0,0,.3);
-}}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-padding-top:72px}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Manrope,system-ui,sans-serif;min-height:100vh}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--brand);z-index:30}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#111110;z-index:30}
 
 /* ── HEADER ── */
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:linear-gradient(135deg,var(--brand) 60%,var(--brand2));color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.hbar{display:flex;align-items:center;gap:10px;max-width:960px;margin:auto;padding:10px 14px}
-.logo{font-weight:800;font-size:20px;letter-spacing:-.5px;line-height:1}.logo i{color:var(--acc);font-style:normal}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:#111110;border-bottom:2px solid var(--acc);color:#e8e4dc;box-shadow:0 2px 12px rgba(0,0,0,.6)}
+.hbar{display:flex;align-items:center;gap:8px;max-width:960px;margin:auto;padding:10px 14px}
+.logo{display:inline-flex;flex-direction:column;align-items:flex-start;gap:0;line-height:1;flex:none}
+.logo-top{display:inline-flex;align-items:baseline;gap:0;line-height:1}
+.logo-text{font-weight:800;font-size:26px;letter-spacing:-.5px;color:#f0ece4;font-family:Manrope,system-ui,sans-serif;line-height:1;vertical-align:baseline}
+.logo-dot{width:7px;height:7px;background:var(--acc);border-radius:50%;margin-left:2px;display:inline-block;vertical-align:baseline;position:relative;top:1px;flex:none}
+.logo-sub{font-size:9px;font-weight:600;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;display:none;margin-top:5px;line-height:1}
+@media(min-width:480px){.logo-sub{display:block}}
 .hbar .sp{flex:1}
-.hbtn{border:0;border-radius:9px;padding:8px 13px;font:600 13px Manrope,sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
-.hbtn.acc{background:var(--acc);color:#1a1200}
-.hbtn.ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
-.prog-wrap{max-width:960px;margin:0 auto;padding:6px 14px 10px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(255,255,255,.85)}
-.prog-track{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}
+.hbtn{border:0;border-radius:9px;padding:8px 13px;font:600 12px Manrope,sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.hbtn.acc{background:var(--acc);color:#1a1000}
+.hbtn.ghost{background:rgba(255,255,255,.08);color:#c8c4bc;border:1px solid rgba(255,255,255,.14)}
+.hbtn.rst{background:rgba(255,255,255,.06);color:#9e9890;border:1px solid rgba(255,255,255,.1);font-size:11px}
+.prog-wrap{max-width:960px;margin:0 auto;padding:5px 14px 9px;display:flex;align-items:center;gap:10px;font-size:12px;color:rgba(232,228,220,.75)}
+.prog-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden}
 .prog-fill{height:100%;background:var(--acc2);transition:width .3s;border-radius:6px}
 
 button{font:inherit;cursor:pointer}
@@ -50,7 +52,7 @@ main{max-width:960px;margin:auto;padding:14px 14px 100px}
 .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:none;padding:9px 14px;border:0;background:none;color:var(--mut);font:600 13px Manrope,sans-serif;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:9px 9px 0 0;cursor:pointer}
-.tab.on{color:var(--brand);border-bottom-color:var(--brand);background:var(--card)}
+.tab.on{color:var(--acc);border-bottom-color:var(--acc);background:var(--card)}
 .tab svg{width:15px;height:15px;vertical-align:middle;margin-right:4px}
 
 /* ── PANEL: META ── */
@@ -77,19 +79,19 @@ main{max-width:960px;margin:auto;padding:14px 14px 100px}
 .toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-sl{position:absolute;inset:0;background:var(--line);border-radius:12px;cursor:pointer;transition:.2s}
 .toggle-sl::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.toggle-sl{background:var(--brand)}
+.toggle input:checked+.toggle-sl{background:var(--acc)}
 .toggle input:checked+.toggle-sl::before{transform:translateX(18px)}
 .cfg-preview{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
 .cfg-tag{background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px}
 .cfg-tag button{background:none;border:0;color:var(--no);font-size:16px;line-height:1;padding:0}
 .add-item-row{display:flex;gap:8px;margin-top:10px}
 .add-item-row input{flex:1}
-.add-item-row button{flex:none;background:var(--brand);color:#fff;border:0;border-radius:9px;padding:9px 14px;font-weight:600}
+.add-item-row button{flex:none;background:var(--acc);color:#1a1000;border:0;border-radius:9px;padding:9px 14px;font-weight:600}
 
 /* ── PANEL: INSPECCIÓN ── */
 .ambchips{display:flex;gap:7px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:thin}
 .ambchip{flex:none;border:0;border-radius:99px;padding:7px 13px;font-size:13px;font-weight:600;background:var(--chip);color:var(--ink);cursor:pointer}
-.ambchip.on{background:var(--brand);color:#fff}
+.ambchip.on{background:var(--acc);color:#1a1000}
 .ambchip small{opacity:.7;margin-left:4px}
 
 .amb-sec{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)}
@@ -107,7 +109,7 @@ main{max-width:960px;margin:auto;padding:14px 14px 100px}
 .snbtn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:7px 18px;font-weight:700;font-size:14px;min-width:62px;transition:.15s}
 .snbtn.si.on{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
 .snbtn.no.on{background:var(--nobg);color:var(--no);border-color:var(--no)}
-.lnk{background:none;border:0;color:var(--mut);font-size:12px;font-weight:600;text-decoration:underline;padding:4px 0}
+.lnk{background:#2c2c2a;border:1.5px solid var(--acc);color:#c8c4bc;font-size:12px;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:9px;cursor:pointer;white-space:nowrap}
 .item-extra{grid-column:2;margin-top:6px;display:flex;flex-direction:column;gap:8px}
 .item-extra textarea{min-height:56px;resize:vertical}
 
@@ -117,17 +119,17 @@ main{max-width:960px;margin:auto;padding:14px 14px 100px}
 .photo-thumb img{width:100%;height:100%;object-fit:cover}
 .photo-thumb .del-ph{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:50%;width:20px;height:20px;font-size:13px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
 .photo-thumb .ph-note{position:absolute;inset:auto 0 0;background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.add-photo-btn{width:74px;height:74px;border-radius:9px;border:2px dashed var(--line);background:var(--bg);color:var(--mut);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.add-photo-btn{width:74px;height:74px;border-radius:9px;border:2px dashed var(--line);background:var(--bg);color:var(--mut);font-size:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;padding:0}
 input[type=file]{display:none}
 
 /* añadir ítem */
 .add-row{padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);background:var(--chip)}
 .add-row input{flex:1;min-width:120px}
 .add-row select{flex:none;width:130px}
-.add-row .btn-add{flex:none;background:var(--brand);color:#fff;border:0;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}
+.add-row .btn-add{flex:none;background:var(--acc);color:#1a1000;border:0;border-radius:9px;padding:9px 14px;font-weight:700;white-space:nowrap}
 
 /* resumen */
-.sumcard{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:var(--radius);padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;text-align:center;box-shadow:var(--sh);margin-bottom:14px}
+.sumcard{background:linear-gradient(135deg,#2c2b28,#1e1e1c);color:#e8e4dc;border:1px solid var(--acc);border-radius:var(--radius);padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;text-align:center;box-shadow:var(--sh);margin-bottom:14px}
 .sumcard b{display:block;font-size:28px;font-weight:800}
 .sumcard span{font-size:12px;opacity:.8}
 
@@ -141,7 +143,7 @@ input[type=file]{display:none}
 .modal-box h4{margin:0;font-size:15px}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end}
 .modal-actions button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:8px 16px;font-weight:600}
-.modal-actions button.pri{background:var(--brand);color:#fff;border-color:var(--brand)}
+.modal-actions button.pri{background:var(--acc);color:#1a1000;border-color:var(--acc)}
 .hidden{display:none!important}
 </style>
 </head>
@@ -149,14 +151,19 @@ input[type=file]{display:none}
 
 <header>
   <div class="hbar">
-    <div class="logo">inspecta<i>.</i></div>
+    <div class="logo">
+      <div class="logo-top"><span class="logo-text">Inspecta</span><span class="logo-dot"></span></div>
+      <span class="logo-sub">Inspección técnica</span>
+    </div>
     <div class="sp"></div>
     <button class="hbtn ghost" id="btnConfig" title="Configurar vivienda">⚙ Vivienda</button>
+    <button class="hbtn rst" onclick="(function(){if(confirm('¿Borrar todo el avance de esta inspección?')){try{localStorage.removeItem(KEY);}catch(e){}S.st={};S.nt={};S.ex={};S.photos={};S.open={};S.m={p:'',f:new Date().toISOString().slice(0,10),rr:'',tt:'',piso:'',promo:''};S.cfg={dmaster:true,bmaster:true,wc:true,sala:true,comedor:true,cocina:true,lavanderia:true,corredor:true,terraza:false,estudio:false,garaje:false,dorms:2,banos:0,custom:[]};save();render();}})()" title="Reiniciar inspección">↺ Reiniciar</button>
     <button class="hbtn acc" id="btnPDF">⬇ Exportar PDF</button>
   </div>
   <div class="prog-wrap">
     <div class="prog-track"><div class="prog-fill" id="pb" style="width:0%"></div></div>
     <span id="pt">0 de 0 revisados</span>
+    <span style="margin-left:auto;font-size:10px;opacity:.35;white-space:nowrap">By Sinergia Medios Digitales</span>
   </div>
 </header>
 
@@ -252,9 +259,6 @@ input[type=file]{display:none}
     <div class="ambchips" id="chips"></div>
     <div id="list"></div>
     <div class="sumcard" id="sum"></div>
-    <div class="foot">
-      <button class="foobtn" id="rst">↺ Reiniciar inspección</button>
-    </div>
   </div>
 </main>
 
@@ -460,10 +464,10 @@ function renderInspeccion(ambs, tot, si, no, done) {
         <div class="item-acts">
           <button class="snbtn si ${s==="si"?"on":""}" data-s="${esc(it.id)}" data-v="si">Sí</button>
           <button class="snbtn no ${s==="no"?"on":""}" data-s="${esc(it.id)}" data-v="no">No</button>
-          <button class="lnk" data-toggle="${esc(it.id)}">${open?"▲ Cerrar":"▼ Nota y fotos"}</button>
+          <button class="lnk" data-toggle="${esc(it.id)}">${open?"▲ Cerrar":"+ Agregar nota y fotos"}</button>
         </div>
         ${open ? `<div class="item-extra">
-          <textarea data-nt="${esc(it.id)}" placeholder="Nota de inspección">${esc(S.nt[it.id]||"")}</textarea>
+          <textarea data-nt="${esc(it.id)}" placeholder="Agregar notas">${esc(S.nt[it.id]||"")}</textarea>
           <div class="photos-wrap">
             ${photos.map((ph,pi)=>`<div class="photo-thumb" data-view-photo="${esc(it.id)}" data-pi="${pi}">
               <img src="${ph.url}" alt="">
@@ -557,8 +561,15 @@ document.addEventListener("click", e => {
   }
 
   // rst
-  if(el.id==="rst"){
-    if(confirm("¿Borrar todo el avance de esta inspección?")){ S.st={};S.nt={};S.ex={};S.photos={};S.open={};save();render(); }
+  if(e.target.closest("[data-action='rst']")){
+    if(confirm("¿Borrar todo el avance de esta inspección?")){
+      // borrar la key correcta y resetear todo el estado
+      try{ localStorage.removeItem(KEY); }catch(e){}
+      S.st={};S.nt={};S.ex={};S.photos={};S.open={};
+      S.m={p:"",f:new Date().toISOString().slice(0,10),rr:"",tt:"",piso:"",promo:""};
+      S.cfg={dmaster:true,bmaster:true,wc:true,sala:true,comedor:true,cocina:true,lavanderia:true,corredor:true,terraza:false,estudio:false,garaje:false,dorms:2,banos:0,custom:[]};
+      save(); render();
+    }
     return;
   }
 
@@ -705,23 +716,30 @@ async function exportPDF(){
       doc.text(label,x+w/2,yy+h-3.2,{align:"center"});
     };
     const stateMeta = s => s==="si" ? {label:"EJECUTADO",bg:ok} : s==="no" ? {label:"NO EJECUTADO",bg:no} : {label:"PENDIENTE",bg:[140,140,140]};
-    // logotipo: texto "inspecta" en negro + punto dorado pegado al texto
-    const drawLogo=(x,y,size)=>{
+    // logotipo: texto "inspecta" + punto dorado al baseline + subtítulo debajo
+    const drawLogo=(x,y,size,showSub=true)=>{
       doc.setFont("helvetica","bold"); doc.setFontSize(size);
       doc.setTextColor(18,18,18);
-      doc.text("inspecta",x,y);
-      const tw=doc.getTextWidth("inspecta");
-      const gap=size*0.07, dotSize=size*0.17;
+      doc.text("Inspecta",x,y);
+      const tw=doc.getTextWidth("Inspecta");
+      // círculo: base levemente sobre el baseline igual que en la appweb (top:1px)
+      const gap=size*0.03, r=size*0.062;
       sf(acc);
-      doc.rect(x+tw+gap, y-dotSize*0.92, dotSize, dotSize, "F");
-      return tw+gap+dotSize;
+      doc.circle(x+tw+gap+r, y-r*0.6, r, "F");
+      if(showSub){
+        st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(size*0.26);
+        doc.setCharSpace(0.7);
+        doc.text("INSPECCIÓN TÉCNICA",x,y+size*0.36);
+        doc.setCharSpace(0);
+      }
+      return tw+gap+r*2;
     };
 
     let currentSubtitle="";
     const drawHeader=(subtitle)=>{
       sf(beige); doc.rect(0,0,W,22,"F");
-      sf(acc); doc.rect(0,22,W,0.87,"F");
-      drawLogo(ml,11,16);
+      sf(acc); doc.rect(0,22,W,0.28,"F");
+      drawLogo(ml,11,16,false);
       st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(6.8);
       doc.text("INFORME DE INSPECCIÓN TÉCNICA",ml,16);
       st(mut); doc.setFontSize(6.2);
@@ -758,7 +776,7 @@ async function exportPDF(){
     sf(beige); doc.rect(0,0,W,58,"F");
     drawLogo(ml,26,30);
     st(ink); doc.setFont("helvetica","normal"); doc.setFontSize(9);
-    doc.text("INSPECCIÓN TÉCNICA DE VIVIENDAS",ml,33);
+    doc.text("INSPECCIÓN TÉCNICA DE VIVIENDAS",ml,42);
 
     // badge resultado general (esquina superior derecha)
     const bw=58,bh=40,bx=W-mr-bw,by=10;
@@ -820,8 +838,8 @@ async function exportPDF(){
 
     // franja inferior de portada
     sf(beige); doc.rect(0,H-16,W,16,"F");
-    sf(acc); doc.rect(0,H-16,W,0.87,"F");
-    drawLogo(ml,H-7,10);
+    sf(acc); doc.rect(0,H-16,W,0.28,"F");
+    drawLogo(ml,H-7,10,false);
     st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.6);
     doc.text("CALIDAD · CONFIANZA · PROFESIONALISMO",W/2,H-7,{align:"center"});
     doc.text(`${reportCode}  ·  ${today}`,W-mr,H-7,{align:"right"});
@@ -990,8 +1008,8 @@ async function exportPDF(){
     for(let pg=2;pg<=totalPages;pg++){
       doc.setPage(pg);
       sf(beige); doc.rect(0,H-10,W,10,"F");
-      sf(acc); doc.rect(0,H-10,W,0.522,"F");
-      const lw=drawLogo(ml,H-4.2,7.4);
+      sf(acc); doc.rect(0,H-10,W,0.28,"F");
+      const lw=drawLogo(ml,H-4.2,7.4,false);
       st(mut); doc.setFont("helvetica","normal"); doc.setFontSize(6.6);
       doc.text(" · Inspección técnica independiente",ml+lw+1.5,H-4.2);
       doc.text(`Página ${pg} de ${totalPages}`,W-mr,H-4.2,{align:"right"});
@@ -1033,3 +1051,5 @@ render();
 </script>
 </body>
 </html>
+
+</body></html>
